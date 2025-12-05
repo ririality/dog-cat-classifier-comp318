@@ -1,47 +1,80 @@
 package com.pettech.dogcatclassifier
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.pettech.dogcatclassifier.ui.theme.DogCatClassifierTheme
+import android.provider.MediaStore
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import com.pettech.dogcatclassifier.ml.DogCatClassifier
 
-class MainActivity : ComponentActivity() {
+// Marianna McCue – Dec 2025 – Main app activity with image selection and classification
+
+class MainActivity : Activity() {
+
+    private lateinit var imgPreview: ImageView
+    private lateinit var btnSelectImage: Button
+    private lateinit var btnClassify: Button
+    private lateinit var txtResult: TextView
+
+    private lateinit var classifier: DogCatClassifier
+    private var selectedBitmap: Bitmap? = null
+
+    private val IMAGE_REQUEST_CODE = 100
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            DogCatClassifierTheme {
-                Scaffold( modifier = Modifier.fillMaxSize() ) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+        setContentView(R.layout.activity_main)
+
+        imgPreview = findViewById(R.id.imgPreview)
+        btnSelectImage = findViewById(R.id.btnSelectImage)
+        btnClassify = findViewById(R.id.btnClassify)
+        txtResult = findViewById(R.id.txtResult)
+
+        classifier = DogCatClassifier(this)
+
+        btnSelectImage.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(intent, IMAGE_REQUEST_CODE)
+        }
+
+        btnClassify.setOnClickListener {
+            selectedBitmap?.let {
+                val input = convertBitmapToFloatArray(it)
+                val result = classifier.classify(input)
+                txtResult.text = "Prediction: $result"
+            } ?: run {
+                txtResult.text = "Please select an image first"
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    DogCatClassifierTheme {
-        Greeting("Android")
+        if (requestCode == IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val imageUri: Uri? = data?.data
+            selectedBitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, imageUri)
+            imgPreview.setImageBitmap(selectedBitmap)
+        }
+    }
+
+    private fun convertBitmapToFloatArray(bitmap: Bitmap): FloatArray {
+        val resized = Bitmap.createScaledBitmap(bitmap, 150, 150, true)
+        val input = FloatArray(150 * 150 * 3)
+        var index = 0
+
+        for (y in 0 until 150) {
+            for (x in 0 until 150) {
+                val pixel = resized.getPixel(x, y)
+                input[index++] = ((pixel shr 16) and 0xFF) / 255f
+                input[index++] = ((pixel shr 8) and 0xFF) / 255f
+                input[index++] = (pixel and 0xFF) / 255f
+            }
+        }
+        return input
     }
 }
