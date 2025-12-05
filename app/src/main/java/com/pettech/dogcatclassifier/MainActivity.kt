@@ -43,8 +43,7 @@ class MainActivity : Activity() {
 
         btnClassify.setOnClickListener {
             selectedBitmap?.let {
-                val input = convertBitmapToFloatArray(it)
-                val result = classifier.classify(input)
+                val result = classifier.classify(it)
                 txtResult.text = "Prediction: $result"
             } ?: run {
                 txtResult.text = "Please select an image first"
@@ -60,21 +59,5 @@ class MainActivity : Activity() {
             selectedBitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, imageUri)
             imgPreview.setImageBitmap(selectedBitmap)
         }
-    }
-
-    private fun convertBitmapToFloatArray(bitmap: Bitmap): FloatArray {
-        val resized = Bitmap.createScaledBitmap(bitmap, 150, 150, true)
-        val input = FloatArray(150 * 150 * 3)
-        var index = 0
-
-        for (y in 0 until 150) {
-            for (x in 0 until 150) {
-                val pixel = resized.getPixel(x, y)
-                input[index++] = ((pixel shr 16) and 0xFF) / 255f
-                input[index++] = ((pixel shr 8) and 0xFF) / 255f
-                input[index++] = (pixel and 0xFF) / 255f
-            }
-        }
-        return input
     }
 }
