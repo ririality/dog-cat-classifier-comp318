@@ -11,7 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.pettech.dogcatclassifier.ml.DogCatClassifier
 
-// Marianna McCue – Dec 2025 – Main app activity with image selection and classification
+// Marianna McCue – Dec 2025 – Main activity using system file picker (Activity version)
 
 class MainActivity : Activity() {
 
@@ -36,8 +36,11 @@ class MainActivity : Activity() {
 
         classifier = DogCatClassifier(this)
 
+
         btnSelectImage.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
+            intent.type = "image/*"
             startActivityForResult(intent, IMAGE_REQUEST_CODE)
         }
 
@@ -56,8 +59,9 @@ class MainActivity : Activity() {
 
         if (requestCode == IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val imageUri: Uri? = data?.data
-            selectedBitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, imageUri)
-            imgPreview.setImageBitmap(selectedBitmap)
+            val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, imageUri)
+            selectedBitmap = bitmap
+            imgPreview.setImageBitmap(bitmap)
         }
     }
 }
