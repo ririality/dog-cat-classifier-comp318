@@ -5,35 +5,64 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:fitsSystemWindows="true"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="40dp"
+    android:paddingBottom="16dp"
+    android:background="@android:color/white">
+
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DogCatClassifier"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/txtSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select a photo, then classify it"
+        android:textSize="14sp"
+        android:textColor="#6B7280"
+        android:layout_marginBottom="12dp" />
 
     <ImageView
         android:id="@+id/imgPreview"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:background="#DDDDDD"
-        android:scaleType="centerCrop" />
+        android:layout_height="220dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_image_card"
+        android:clipToOutline="true"
+        android:outlineProvider="background"
+        android:scaleType="centerCrop"
+        android:contentDescription="Selected image preview" />
 
     <Button
         android:id="@+id/btnSelectImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Select Image"
-        android:layout_marginTop="16dp"/>
+        android:layout_height="48dp"
+        android:text="SELECT IMAGE" />
 
     <Button
         android:id="@+id/btnClassify"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Classify Image"
-        android:layout_marginTop="8dp"/>
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:text="CLASSIFY IMAGE" />
 
     <TextView
         android:id="@+id/txtResult"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:padding="14dp"
         android:text="Result will appear here"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"/>
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="@drawable/bg_result_chip" />
 
 </LinearLayout>

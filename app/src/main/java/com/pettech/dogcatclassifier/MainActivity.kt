@@ -36,6 +36,8 @@ class MainActivity : Activity() {
 
         classifier = DogCatClassifier(this)
 
+        btnClassify.isEnabled = false
+        txtResult.text = "Select an image to begin"
 
         btnSelectImage.setOnClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
@@ -46,6 +48,7 @@ class MainActivity : Activity() {
 
         btnClassify.setOnClickListener {
             selectedBitmap?.let {
+                txtResult.text = "Classifying..."
                 val result = classifier.classify(it)
                 txtResult.text = "Prediction: $result"
             } ?: run {
@@ -59,9 +62,20 @@ class MainActivity : Activity() {
 
         if (requestCode == IMAGE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val imageUri: Uri? = data?.data
+            imageUri?.let {
+                contentResolver.takePersistableUriPermission(
+                    it,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
+            }
+
             val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, imageUri)
             selectedBitmap = bitmap
             imgPreview.setImageBitmap(bitmap)
+
+            // Enable classify now that we have an image
+            btnClassify.isEnabled = true
+            txtResult.text = "Ready to classify"
         }
     }
 }
