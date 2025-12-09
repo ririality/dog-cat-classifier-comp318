@@ -38,7 +38,7 @@ class MainActivity : Activity() {
 
         btnClassify.isEnabled = false
         txtResult.text = "Select an image to begin"
-
+//launch system file picker
         btnSelectImage.setOnClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.addCategory(Intent.CATEGORY_OPENABLE)
