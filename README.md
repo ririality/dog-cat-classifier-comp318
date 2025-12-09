@@ -1,4 +1,4 @@
-Dog vs Cat Image Classifier (TensorFlow Lite – Android)
+Dog vs Cat Image Classifier (TensorFlow Lite / Android)
 
 This project is an Android mobile application that classifies images as either a dog or a cat using an on-device TensorFlow Lite machine learning model. Users can select an image from their device storage or camera and receive a real-time prediction directly on the phone.
 
